@@ -302,13 +302,7 @@ public class Main extends Application{
 					rt2.setCycleCount(1);
 					rt2.play();
 				}
-				
-
-				
-				
-				
-
-				
+	
 	         }
 	      };
 	      mainloop.start();
