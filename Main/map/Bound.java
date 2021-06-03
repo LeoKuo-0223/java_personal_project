@@ -27,15 +27,15 @@ public class Bound extends Entity{
     public void setPos(double x,double y){
     Pos[0] = x;
     Pos[1] = y;
-    bound.setFitWidth(Width);
-    bound.setFitHeight(Height);
-    bound.setX((Pos[0]-Width/2)); 
-    bound.setY((1080-Pos[1]-Height));
+    bound.setFitWidth(Width*ratio[0]);
+    bound.setFitHeight(Height*ratio[1]);
+    bound.setX((Pos[0]-Width/2)*ratio[0]); 
+    bound.setY((1080-Pos[1]-Height)*ratio[1]);
 
-    hitbox.setWidth(Width);
-    hitbox.setHeight(Height);
-    hitbox.setX((Pos[0]-Width/2)); 
-    hitbox.setY((1080-Pos[1]-Height));
+    hitbox.setWidth(Width*ratio[0]);
+    hitbox.setHeight(Height*ratio[1]);
+    hitbox.setX((Pos[0]-Width/2)*ratio[0]); 
+    hitbox.setY((1080-Pos[1]-Height)*ratio[1]);
    }
 
    @Override

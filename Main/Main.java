@@ -20,14 +20,16 @@ public class Main extends Application{
 	List<Entity> player = new ArrayList<>();
 	List<Piece> map = new ArrayList<>();
 	List<Entity> obstacle = new ArrayList<>();
+	int Map_X = 500;
+	int Map_Y = 10;
 
 	int mapRaw_count = 0;
 	public static Player p;
 	public static Player p2;
 
 	public Main() throws FileNotFoundException{
-	      p = new Player(500,900);
-		  p2 = new Player(1000, 850);
+	      p = new Player(600,870);
+		  p2 = new Player(1500, 100);
 	}
 	
 	 public static void main(String args[]) throws FileNotFoundException{
@@ -125,27 +127,26 @@ public class Main extends Application{
 		player.add(p2);
 		//build map
 		for(String col: Map.map1){
-
 			for(int i=0;i<col.length();i++){
 				if(col.charAt(i)=='1'){
-					Bound bound = new Bound(300+80*i, 80+80*mapRaw_count);
+					Bound bound = new Bound(Map_X +80*i, Map_Y+80*mapRaw_count);
 					obstacle .add(bound);
 					root.getChildren().addAll(bound.bound,bound.hitbox);
 				}else if(col.charAt(i)=='0'){
-					Piece pieces = new Piece(300+80*i, 80+80*mapRaw_count);
+					Piece pieces = new Piece(Map_X +80*i, Map_Y+80*mapRaw_count);
 					map.add(pieces);
 					root.getChildren().addAll(pieces.ground,pieces.block);
 				}else if(col.charAt(i)=='2'){
-					Obstacle1 obs = new Obstacle1(300+80*i, 80+80*mapRaw_count);
+					Obstacle1 obs = new Obstacle1(Map_X +80*i, Map_Y+80*mapRaw_count);
 					obstacle.add(obs);
-					Piece pieces = new Piece(300+80*i, 80+80*mapRaw_count);
+					Piece pieces = new Piece(Map_X +80*i, Map_Y+80*mapRaw_count);
 					map.add(pieces);
 					root.getChildren().addAll(pieces.ground,pieces.block);
 					root.getChildren().addAll(obs.obstacle,obs.hitbox);
 				}else if(col.charAt(i)=='3'){
-					obstacle_wood obs = new obstacle_wood(300+80*i, 80+80*mapRaw_count);
+					obstacle_wood obs = new obstacle_wood(Map_X +80*i, Map_Y+80*mapRaw_count);
 					obstacle .add(obs);
-					Piece pieces = new Piece(300+80*i, 80+80*mapRaw_count);
+					Piece pieces = new Piece(Map_X +80*i, Map_Y+80*mapRaw_count);
 					map.add(pieces);
 					root.getChildren().addAll(pieces.ground,pieces.block);
 					root.getChildren().addAll(obs.obstacle,obs.hitbox);
@@ -273,12 +274,14 @@ public class Main extends Application{
 				}
 				for(Laser la: p.laserList){
 					if(la.hitbox.intersects(p2.hitbox.getBoundsInLocal())){
-						p2.inject = true;
+						// p2.inject = true;
+						p2.superMode = true;
 					}
 				}
 				for(Laser la: p2.laserList){
 					if(la.hitbox.intersects(p.hitbox.getBoundsInLocal())){
-						p.inject = true;
+						// p.inject = true;
+						p.superMode = true;
 					}
 				}
 				

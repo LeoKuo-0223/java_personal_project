@@ -36,7 +36,7 @@ public class Entity {
 	public int fireNum = 0;
 	public List<Laser> laserList = new ArrayList<>();
 	public boolean inject = false;
-	
+	public boolean superMode = false;
 	 public Entity() throws FileNotFoundException{}
 
 	   public void setPos(double x,double y){

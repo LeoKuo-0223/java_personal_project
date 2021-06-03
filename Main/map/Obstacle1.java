@@ -6,7 +6,7 @@ import java.util.List;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
+import javafx.scene.paint.Color;    
 import javafx.scene.shape.Rectangle;
 import java.io.FileInputStream;
 
@@ -28,15 +28,15 @@ public class Obstacle1 extends Entity{
     public void setPos(double x,double y){
     Pos[0] = x;
     Pos[1] = y;
-    obstacle.setFitWidth(Width);
-    obstacle.setFitHeight(Height);
-    obstacle.setX((Pos[0]-Width/2)); 
-    obstacle.setY((1080-Pos[1]-Height));
+    obstacle.setFitWidth(Width*ratio[0]);
+    obstacle.setFitHeight(Height*ratio[1]);
+    obstacle.setX((Pos[0]-Width/2)*ratio[0]); 
+    obstacle.setY((1080-Pos[1]-Height)*ratio[1]);
 
-    hitbox.setWidth(Width);
-    hitbox.setHeight(Height);
-    hitbox.setX((Pos[0]-Width/2)); 
-    hitbox.setY((1080-Pos[1]-Height));
+    hitbox.setWidth(Width*ratio[0]);
+    hitbox.setHeight(Height*ratio[1]);
+    hitbox.setX((Pos[0]-Width/2)*ratio[0]); 
+    hitbox.setY((1080-Pos[1]-Height)*ratio[1]);
    }
 
    @Override

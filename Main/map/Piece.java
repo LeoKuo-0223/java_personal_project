@@ -33,15 +33,15 @@ public class Piece extends Entity{
     public void setPos(double x,double y){
     Pos[0] = x;
     Pos[1] = y;
-    ground.setFitWidth(Width);
-    ground.setFitHeight(Height);
-    ground.setX((Pos[0]-Width/2)); 
-    ground.setY((1080-Pos[1]-Height));
+    ground.setFitWidth(Width*ratio[0]);
+    ground.setFitHeight(Height*ratio[1]);
+    ground.setX((Pos[0]-Width/2)*ratio[0]); 
+    ground.setY((1080-Pos[1]-Height)*ratio[1]);
 
-    block.setWidth(Width);
-    block.setHeight(Height);
-    block.setX((Pos[0]-Width/2)); 
-    block.setY((1080-Pos[1]-Height));
+    block.setWidth(Width*ratio[0]);
+    block.setHeight(Height*ratio[1]);
+    block.setX((Pos[0]-Width/2)*ratio[0]); 
+    block.setY((1080-Pos[1]-Height)*ratio[1]);
 
    }
 
