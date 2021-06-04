@@ -8,19 +8,32 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 public class Player extends Entity{
-
-	public Player(double x,double y) throws FileNotFoundException {
-		playerImage = new Image(new FileInputStream("picture/player_01.png"));
-        player = new ImageView(playerImage);
-        turnright =new Image(new FileInputStream("picture/player_12.png"));
-        turnleft =new Image(new FileInputStream("picture/player_14.png"));
-        turnup =new Image(new FileInputStream("picture/player_02.png"));
+    public boolean animation ;
+	public Player(double x,double y,int role) throws FileNotFoundException {
+        if(role ==1){
+            playerImage = new Image(new FileInputStream("picture/player_01.png"));
+            player = new ImageView(playerImage);
+            turnright =new Image(new FileInputStream("picture/player_12.png"));
+            turnleft =new Image(new FileInputStream("picture/player_14.png"));
+            turnup =new Image(new FileInputStream("picture/player_02.png"));
+            setSize(100,100);
+        }
+        else if(role ==2){
+            playerImage = new Image(new FileInputStream("picture/character_zombie_cheer0.png"));
+            player = new ImageView(playerImage);
+            turnleft = new Image(new FileInputStream("picture/character_zombie_Left.png"));
+            turnright =new Image(new FileInputStream("picture/character_zombie_walk0.png"));
+            turnup =new Image(new FileInputStream("picture/character_zombie_back.png"));
+            setSize(100,90);
+        }
+		
         player.setSmooth(true);
         hitbox = new Rectangle();
         hitbox.setFill(Color.TRANSPARENT);
-        hitbox.setStroke(Color.LIGHTGREEN);
+        hitbox.setStroke(Color.TRANSPARENT);
         hitbox.setStrokeWidth(2);
-        setSize(100,100);
+        animation = false;
+        
         setPos(x,y);
         
 	}
@@ -35,20 +48,18 @@ public class Player extends Entity{
     player.setY((1080-Pos[1]-Height)*ratio[1]);
 
     hitbox.setWidth((Width-40)*ratio[0]);
-    hitbox.setHeight((Height-20)*ratio[1]);
+    hitbox.setHeight((Height-40)*ratio[1]);
     hitbox.setX((Pos[0]-(Width-40)/2)*ratio[0]); 
-    hitbox.setY((1080-Pos[1]-(Height-10))*ratio[1]);
-
-
+    hitbox.setY((1080-Pos[1]-(Height-30))*ratio[1]);
    }
    @Override
    public void act(){
 
     if(inject){
-        setPos(1000, 850);
+        inject = false;
+        setPos(1000, 480);
         Motion[0] = 0;
         Motion[1] = 0;
-        inject = false;
     }else{
         if(collidev==1&& !Leftpress && !Rightpress && !Down){
             Motion[0] = 0;

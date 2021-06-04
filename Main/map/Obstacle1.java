@@ -1,9 +1,6 @@
 package map;
 import peopleEntity.*;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;    
@@ -31,12 +28,12 @@ public class Obstacle1 extends Entity{
     obstacle.setFitWidth(Width*ratio[0]);
     obstacle.setFitHeight(Height*ratio[1]);
     obstacle.setX((Pos[0]-Width/2)*ratio[0]); 
-    obstacle.setY((1080-Pos[1]-Height)*ratio[1]);
+    obstacle.setY((1080-Pos[1]-(Height+10))*ratio[1]);
 
     hitbox.setWidth(Width*ratio[0]);
     hitbox.setHeight(Height*ratio[1]);
     hitbox.setX((Pos[0]-Width/2)*ratio[0]); 
-    hitbox.setY((1080-Pos[1]-Height)*ratio[1]);
+    hitbox.setY((1080-Pos[1]-(Height+10))*ratio[1]);
    }
 
    @Override

@@ -2,7 +2,6 @@ package weapon;
 import peopleEntity.Entity;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;

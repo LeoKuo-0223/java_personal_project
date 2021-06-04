@@ -2,19 +2,16 @@ import peopleEntity.*;
 import map.*;
 import weapon.*;
 import java.io.FileNotFoundException;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import javafx.application.Application; 
-
 import javafx.scene.Group; 
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.animation.AnimationTimer;
-import javafx.animation.RotateTransition;
+import javafx.animation.FadeTransition;
 
 public class Main extends Application{
 	List<Entity> player = new ArrayList<>();
@@ -22,14 +19,24 @@ public class Main extends Application{
 	List<Entity> obstacle = new ArrayList<>();
 	int Map_X = 500;
 	int Map_Y = 10;
+	public double p_x = 650;
+	public double p_y = 880;
+	public double p2_x = 1470;
+	public double p2_y = 100;
+
 
 	int mapRaw_count = 0;
 	public static Player p;
 	public static Player p2;
+	public static Robot r1;
+	public static Robot2 r2;
 
 	public Main() throws FileNotFoundException{
-	      p = new Player(600,870);
-		  p2 = new Player(1500, 100);
+	      p = new Player(p_x,p_y,1);
+		  p2 = new Player(p2_x, p2_y,2);
+		  r1 = new Robot(520, 870);
+		  r2 = new Robot2(1590, 80);
+
 	}
 	
 	 public static void main(String args[]) throws FileNotFoundException{
@@ -59,7 +66,14 @@ public class Main extends Application{
 					  p2.fire = true;
 					  p2.alreayFired = true;
 					} 
-				  }
+				}else if(ke.getCode()==KeyCode.R){	//reset location if 
+					for(Entity p: player){
+						for(Entity b: obstacle){
+							if(p.hitbox.intersects(b.hitbox.getBoundsInLocal()))
+								p.setPos(950, 850);
+						}
+					}
+				}
 				
 			  
 	       });
@@ -125,6 +139,8 @@ public class Main extends Application{
 	    stage.show();
 		player.add(p);
 		player.add(p2);
+		player.add(r1);
+		player.add(r2);
 		//build map
 		for(String col: Map.map1){
 			for(int i=0;i<col.length();i++){
@@ -156,7 +172,7 @@ public class Main extends Application{
 		}
 		
 		player.forEach(p -> root.getChildren().addAll(p.player,p.hitbox));
-		// root.getChildren().addAll(p.player,p.hitbox);
+		
 
 		
 
@@ -168,8 +184,11 @@ public class Main extends Application{
 				map.forEach(m -> m.act());
 				obstacle.forEach(o -> {try {o.act();} catch (FileNotFoundException e1) {e1.printStackTrace();}});
 				player.forEach(p -> {try {p.act();} catch (FileNotFoundException e1) {e1.printStackTrace();}});
-				RotateTransition rt1 = new RotateTransition(Duration.millis(300), p.player);
-				RotateTransition rt2 = new RotateTransition(Duration.millis(300), p2.player);
+				// RotateTransition rt1 = new RotateTransition(Duration.millis(3000), p.player);
+				// RotateTransition rt2 = new RotateTransition(Duration.millis(3000), p2.player);
+				FadeTransition ft1 = new FadeTransition(Duration.seconds(0.1), p.player);
+				FadeTransition ft2 = new FadeTransition(Duration.seconds(0.1), p2.player);
+				
 
 				//collide with bound
 				for(Entity p: player){
@@ -272,36 +291,143 @@ public class Main extends Application{
 						
 					}
 				}
+					//robot shoot
+					if(r1.getY()%40==0){
+						robotShootLoop: for(int i=0;i<50;i++){
+							try {
+								Laser la = new Laser(r1.getX()+20*(i+1),r1.getY(),true);
+								for(Entity b: obstacle){
+									if(la.hitbox.intersects(b.hitbox.getBoundsInLocal())) break robotShootLoop;
+								}
+								r1.laserList.add(la);
+								root.getChildren().addAll(la.weapon,la.hitbox);
+								r1.fireNum+=2;
+							} catch (FileNotFoundException e) {
+								e.printStackTrace();
+							}
+										
+						}
+					}else{
+						if(r1.fireNum!=0){
+							while(r1.fireNum>0){
+								root.getChildren().remove(root.getChildren().size()-1);
+								r1.laserList.clear();
+								r1.fireNum--;
+								System.out.println(r1.fireNum);
+								System.out.println(root.getChildren().size());
+							}
+						}
+					}
+					//robot2 shoot
+					if(r2.getY()%40==0){
+						robotShootLoop: for(int i=0;i<50;i++){
+							try {
+								Laser la = new Laser(r2.getX()-30-20*(i+1),r2.getY(),true);
+								for(Entity b: obstacle){
+									if(la.hitbox.intersects(b.hitbox.getBoundsInLocal())) break robotShootLoop;
+								}
+								r2.laserList.add(la);
+								root.getChildren().addAll(la.weapon,la.hitbox);
+								r2.fireNum+=2;
+							} catch (FileNotFoundException e) {
+								e.printStackTrace();
+							}
+										
+						}
+					}else{
+						if(r2.fireNum!=0){
+							while(r2.fireNum>0){
+								root.getChildren().remove(root.getChildren().size()-1);
+								r2.laserList.clear();
+								r2.fireNum--;
+								System.out.println(r2.fireNum);
+								System.out.println(root.getChildren().size());
+							}
+						}
+					}
+
+//laser collide with player and cause inject
 				for(Laser la: p.laserList){
-					if(la.hitbox.intersects(p2.hitbox.getBoundsInLocal())){
-						// p2.inject = true;
-						p2.superMode = true;
+					if(!p2.superMode){
+						if(la.hitbox.intersects(p2.hitbox.getBoundsInLocal())){
+							p2.inject = true;
+							p2.superMode = true;
+							p2.animation = true;
+						}
 					}
 				}
 				for(Laser la: p2.laserList){
-					if(la.hitbox.intersects(p.hitbox.getBoundsInLocal())){
-						// p.inject = true;
-						p.superMode = true;
+					if(!p.superMode){
+						if(la.hitbox.intersects(p.hitbox.getBoundsInLocal())){
+							p.inject = true;
+							p.superMode = true;
+							p.animation = true;
+						}
+					}
+				}
+				for(Laser la: r1.laserList){
+					if(!p.superMode){
+						if(la.hitbox.intersects(p.hitbox.getBoundsInLocal())){
+							p.inject = true;
+							p.superMode = true;
+							p.animation = true;
+						}
+					}
+					if(!p2.superMode){
+						if(la.hitbox.intersects(p2.hitbox.getBoundsInLocal())){
+							p2.inject = true;
+							p2.superMode = true;
+							p2.animation = true;
+						}
+					}
+				}
+				for(Laser la: r2.laserList){
+					if(!p.superMode){
+						if(la.hitbox.intersects(p.hitbox.getBoundsInLocal())){
+							p.inject = true;
+							p.superMode = true;
+							p.animation = true;
+						}
+					}
+					if(!p2.superMode){
+						if(la.hitbox.intersects(p2.hitbox.getBoundsInLocal())){
+							p2.inject = true;
+							p2.superMode = true;
+							p2.animation = true;
+						}
+					}
+				}
+
+				if(p.animation||p2.animation){
+					p.animation = false;
+					p2.animation = false;
+					if(p.inject && p2.inject){
+						ft1.setFromValue(0.4);
+						ft1.setToValue(1.0);
+						ft1.setCycleCount(10);
+						ft2.setFromValue(0.4);
+						ft2.setToValue(1.0);
+						ft2.setCycleCount(10);
+						ft1.setOnFinished(e -> {p.superMode = false; });
+						ft2.setOnFinished(e -> {p2.superMode = false; });
+						ft1.play();
+						ft2.play();
+						
+					}else if(p.inject && !p2.inject){
+						ft1.setFromValue(0.4);
+						ft1.setToValue(1.0);
+						ft1.setCycleCount(10);
+						ft1.setOnFinished(e -> {p.superMode = false; });		
+						ft1.play();
+					}else if(p2.inject && !p.inject){
+						ft2.setFromValue(0.4);
+						ft2.setToValue(1.0);
+						ft2.setCycleCount(10);
+						ft2.setOnFinished(e -> {p2.superMode = false;});
+						ft2.play();
 					}
 				}
 				
-				//laser collide with player and cause inject
-				if(p.inject && p2.inject){
-					rt1.setByAngle(1080);
-					rt2.setByAngle(1080);
-					rt1.setCycleCount(1);
-					rt2.setCycleCount(1);
-					rt1.play();
-					rt2.play();
-				}else if(p.inject && !p2.inject){
-					rt1.setByAngle(1080);
-					rt1.setCycleCount(1);
-					rt1.play();
-				}else if(p2.inject && !p.inject){
-					rt2.setByAngle(1080);
-					rt2.setCycleCount(1);
-					rt2.play();
-				}
 	
 	         }
 	      };
