@@ -1,146 +1,191 @@
 import peopleEntity.*;
 import map.*;
 import weapon.*;
+
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.application.Application; 
-import javafx.scene.Group; 
+import javafx.application.Application;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.InputEvent;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.robot.Robot;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.CubicCurveTo;
+import javafx.scene.shape.MoveTo;
+import javafx.scene.shape.Path;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.animation.AnimationTimer;
 import javafx.animation.FadeTransition;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.PathTransition;
+import javafx.animation.RotateTransition;
+import javafx.animation.Timeline;
 
-public class Main extends Application{
+public class Main extends Application {
 	List<Entity> player = new ArrayList<>();
 	List<Piece> map = new ArrayList<>();
 	List<Entity> obstacle = new ArrayList<>();
 	int Map_X = 500;
 	int Map_Y = 10;
+	public ImageView startGame;
+	public ImageView dead;
+	public ImageView gameover;
+	public ImageView timeup;
 	public double p_x = 650;
 	public double p_y = 880;
 	public double p2_x = 1470;
 	public double p2_y = 100;
-
-
+	private static final Integer STARTTIME = 180;
+	private Timeline timeline;
+	private Label timerLabel = new Label();
+	private IntegerProperty timeSeconds = new SimpleIntegerProperty(STARTTIME);
+	private boolean pause = false;
+	private Rectangle button ;
+	private Rectangle resetbutton ;
+	private StackPane buttonstack;
+	private StackPane resetbuttonstack;
+	private Text buttonText;
+	private Text resetbuttonText ;
+	private boolean gameOver;
+	private Robot animeRobot;
 	int mapRaw_count = 0;
 	public static Player p;
 	public static Player p2;
-	public static Robot r1;
+	public static Robot1 r1;
 	public static Robot2 r2;
+	Path path = new Path();
 
-	public Main() throws FileNotFoundException{
-	      p = new Player(p_x,p_y,1);
-		  p2 = new Player(p2_x, p2_y,2);
-		  r1 = new Robot(520, 870);
-		  r2 = new Robot2(1590, 80);
+	public Main() throws FileNotFoundException {
+		startGame = new ImageView(new Image(new FileInputStream("picture/ZS3t.gif")));
+		startGame.setX(550);
+		startGame.setY(400);
+		startGame.setFitWidth(480);
+		startGame.setFitHeight(320);
+		startGame.setVisible(true);
+		dead = new ImageView(new Image(new FileInputStream("picture/zYj.gif")));
+		dead.setX(550);
+		dead.setY(400);
+		dead.setFitWidth(480);
+		dead.setFitHeight(320);
+		dead.setVisible(false);
+		timeup = new ImageView(new Image(new FileInputStream("picture/A8Bf-unscreen.gif")));
+		timeup.setX(550);
+		timeup.setY(400);
+		timeup.setFitWidth(400);
+		timeup.setFitHeight(400);
+		timeup.setVisible(false);
+		gameover = new ImageView(new Image(new FileInputStream("picture/QUC8-unscreen.gif")));
+		gameover.setX(550);
+		gameover.setY(400);
+		gameover.setFitWidth(400);
+		gameover.setFitHeight(400);
+		gameover.setVisible(false);
+		animeRobot = new Robot();
+		gameOver = false;
+		p = new Player(p_x, p_y, 1);
+		p2 = new Player(p2_x, p2_y, 2);
+		r1 = new Robot1(520, 870);
+		r2 = new Robot2(1590, 80);
+		timeline = new Timeline();
+		button = new Rectangle();
+		resetbutton = new Rectangle();
+		timeSeconds.set(STARTTIME);
+		buttonstack = new StackPane();
+		resetbuttonstack = new StackPane();
+		buttonText = new Text("Start");
 
+		buttonText.setFill(Color.RED);
+		buttonText.setDisable(true);
+		buttonText.setFont(Font.font(null, FontWeight.BOLD,30));
+
+		resetbuttonText = new Text("Play Again");
+		resetbuttonText.setFill(Color.RED);
+		resetbuttonText.setFont(Font.font(null, FontWeight.BOLD,20));
+		resetbuttonText.setDisable(true);
+		resetbuttonText.setOpacity(0.4);
+
+		button.setHeight(60);
+		button.setWidth(150);
+		button.setFill(Color.GOLD);
+		button.setArcWidth(30);
+		button.setArcHeight(30);
+
+		resetbutton.setHeight(60);
+		resetbutton.setWidth(150);
+		resetbutton.setFill(Color.PALEGREEN);
+		resetbutton.setArcWidth(30);
+		resetbutton.setArcHeight(30);
+		resetbutton.setOpacity(0.4);
+		resetbutton.setDisable(true);
+
+        buttonstack.setAlignment(Pos.CENTER);
+		buttonstack.setPrefWidth(100);
+		buttonstack.setLayoutX(112.5);
+		buttonstack.setLayoutY(700);
+		buttonstack.getChildren().addAll(button, buttonText);
+		
+		resetbuttonstack.setAlignment(Pos.CENTER);
+		resetbuttonstack.setPrefWidth(150);
+		resetbuttonstack.setLayoutX(112.5);
+		resetbuttonstack.setLayoutY(800);
+		resetbuttonstack.getChildren().addAll(resetbutton, resetbuttonText);
+
+		timerLabel.textProperty().bind(timeSeconds.asString());
+		timerLabel.setTextFill(Color.BLACK);
+		timerLabel.setFont(Font.font(50));
 	}
-	
-	 public static void main(String args[]) throws FileNotFoundException{
-	      launch(args);
-	   }
+
+	public static void main(String args[]) throws FileNotFoundException {
+		launch(args);
+	}
 
 	@Override
 	public void start(Stage stage) throws Exception {
 		Group root = new Group();
 		Scene scene = new Scene(root, 1920, 1080);
-	      scene.setOnKeyPressed(ke -> {
-	          if (ke.getCode() == KeyCode.LEFT) p.Leftpress = true;
-	          else if (ke.getCode() == KeyCode.RIGHT ) p.Rightpress = true;
-	          else if (ke.getCode() == KeyCode.UP ) p.Up = true;
-	          else if (ke.getCode() == KeyCode.DOWN ) p.Down = true;
-			  else if (ke.getCode() == KeyCode.ENTER) {
-				  if(!p.alreayFired){
-					p.fire = true;
-					p.alreayFired = true;
-				  } 
-				}else if (ke.getCode()==KeyCode.A) p2.Leftpress = true;
-				else if (ke.getCode()==KeyCode.D) p2.Rightpress = true;
-				else if (ke.getCode()==KeyCode.W) p2.Up = true;
-				else if (ke.getCode()==KeyCode.S) p2.Down = true;
-				else if (ke.getCode() == KeyCode.SPACE) {
-					if(!p2.alreayFired){
-					  p2.fire = true;
-					  p2.alreayFired = true;
-					} 
-				}else if(ke.getCode()==KeyCode.R){	//reset location if 
-					for(Entity p: player){
-						for(Entity b: obstacle){
-							if(p.hitbox.intersects(b.hitbox.getBoundsInLocal()))
-								p.setPos(950, 850);
-						}
-					}
-				}
-				
-			  
-	       });
-	       scene.setOnKeyReleased(ke -> {
-	          if (ke.getCode() == KeyCode.LEFT) {
-				p.Leftpress = false;
-				if(p.Motion[0]<0){
-					p.Motion[0] = 0;
-				}
-			  }
-			  else if (ke.getCode() == KeyCode.RIGHT) {
-				p.Rightpress = false;
-				if(p.Motion[0]>0){
-					p.Motion[0] = 0;
-				}
-			  }
-	          else if (ke.getCode() == KeyCode.UP) {
-				p.Up = false;
-				if(p.Motion[1]>0){
-					p.Motion[1] = 0;
-				}
-			  }
-	          else if (ke.getCode() == KeyCode.DOWN) {
-				p.Down = false;
-				if(p.Motion[1]<0){
-					p.Motion[1] = 0;
-				}
-			  }else if (ke.getCode() == KeyCode.ENTER) {
-				p.fire = false;
-				p.alreayFired = false;
-			  }else if (ke.getCode() == KeyCode.A) {
-				p2.Leftpress = false;
-				if(p2.Motion[0]<0){
-					p2.Motion[0] = 0;
-				}
-			  }
-			  else if (ke.getCode() == KeyCode.D) {
-				p2.Rightpress = false;
-				if(p2.Motion[0]>0){
-					p2.Motion[0] = 0;
-				}
-			  }
-	          else if (ke.getCode() == KeyCode.W) {
-				p2.Up = false;
-				if(p2.Motion[1]>0){
-					p2.Motion[1] = 0;
-				}
-			  }
-	          else if (ke.getCode() == KeyCode.S) {
-				p2.Down = false;
-				if(p2.Motion[1]<0){
-					p2.Motion[1] = 0;
-				}
-			  }else if (ke.getCode() == KeyCode.SPACE) {
-				p2.fire = false;
-				p2.alreayFired = false;
-			  }
-	       });
+		VBox vb = new VBox();
+		vb.setAlignment(Pos.CENTER);
+		vb.setPrefWidth(150);
+		vb.setLayoutX(112.5);
+		vb.setLayoutY(80);
+		vb.setSpacing(100);
 
 		stage.setFullScreen(true);
 	    stage.setTitle("test");
 	    stage.setScene(scene);
 	    stage.show();
+		
 		player.add(p);
 		player.add(p2);
 		player.add(r1);
 		player.add(r2);
+		
 		//build map
 		for(String col: Map.map1){
 			for(int i=0;i<col.length();i++){
@@ -170,24 +215,36 @@ public class Main extends Application{
 			}
 			mapRaw_count++;
 		}
-		
 		player.forEach(p -> root.getChildren().addAll(p.player,p.hitbox));
+		vb.getChildren().addAll(p.faceBase,p2.faceBase,timerLabel);
+		root.getChildren().addAll(vb,buttonstack,resetbuttonstack);
+		root.getChildren().addAll(p.pointText,p.face,p2.pointText,p2.face);
+		root.getChildren().add(startGame);
+		root.getChildren().add(dead);
+		root.getChildren().add(timeup);
+		root.getChildren().add(gameover);
 		
 
-		
+		//first initialize the object on the scene
+		Entity.setScreenSize(stage.getWidth(),stage.getHeight());
+		map.forEach(m -> m.act());
+		obstacle.forEach(o -> {try {o.act();} catch (FileNotFoundException e1) {e1.printStackTrace();}});
+		player.forEach(p -> {try {p.act();} catch (FileNotFoundException e1) {e1.printStackTrace();}});
 
-		
+		//main animation function
 	    AnimationTimer mainloop = new AnimationTimer() {
 	         @Override
 	         public void handle(long t) {
-				Entity.setScreenSize(stage.getWidth(),stage.getHeight());
+				// Entity.setScreenSize(stage.getWidth(),stage.getHeight());
 				map.forEach(m -> m.act());
 				obstacle.forEach(o -> {try {o.act();} catch (FileNotFoundException e1) {e1.printStackTrace();}});
 				player.forEach(p -> {try {p.act();} catch (FileNotFoundException e1) {e1.printStackTrace();}});
-				// RotateTransition rt1 = new RotateTransition(Duration.millis(3000), p.player);
-				// RotateTransition rt2 = new RotateTransition(Duration.millis(3000), p2.player);
 				FadeTransition ft1 = new FadeTransition(Duration.seconds(0.1), p.player);
 				FadeTransition ft2 = new FadeTransition(Duration.seconds(0.1), p2.player);
+				FadeTransition ftdead = new FadeTransition(Duration.seconds(0.2), dead);
+				ftdead.setFromValue(0.4);
+				ftdead.setToValue(1.0);
+				ftdead.setCycleCount(4);
 				
 
 				//collide with bound
@@ -284,8 +341,8 @@ public class Main extends Application{
 								root.getChildren().remove(root.getChildren().size()-1);
 								p.laserList.clear();
 								p.fireNum--;
-								System.out.println(p.fireNum);
-								System.out.println(root.getChildren().size());
+								// System.out.println(p.fireNum);
+								// System.out.println(root.getChildren().size());
 							}
 						}
 						
@@ -313,8 +370,8 @@ public class Main extends Application{
 								root.getChildren().remove(root.getChildren().size()-1);
 								r1.laserList.clear();
 								r1.fireNum--;
-								System.out.println(r1.fireNum);
-								System.out.println(root.getChildren().size());
+								// System.out.println(r1.fireNum);
+								// System.out.println(root.getChildren().size());
 							}
 						}
 					}
@@ -340,28 +397,44 @@ public class Main extends Application{
 								root.getChildren().remove(root.getChildren().size()-1);
 								r2.laserList.clear();
 								r2.fireNum--;
-								System.out.println(r2.fireNum);
-								System.out.println(root.getChildren().size());
+								// System.out.println(r2.fireNum);
+								// System.out.println(root.getChildren().size());
 							}
 						}
 					}
 
-//laser collide with player and cause inject
+				//laser collide with player and cause inject
 				for(Laser la: p.laserList){
 					if(!p2.superMode){
 						if(la.hitbox.intersects(p2.hitbox.getBoundsInLocal())){
+							dead.setVisible(true);
+							ftdead.setOnFinished(e->{
+								dead.setVisible(false);
+							});
+							ftdead.play();
 							p2.inject = true;
 							p2.superMode = true;
 							p2.animation = true;
+							p.point++;
+							p.pointText.setText(Integer.toString(p.point)+"/10");
+							if(p.point == 10) gameOver = true;
 						}
 					}
 				}
 				for(Laser la: p2.laserList){
 					if(!p.superMode){
 						if(la.hitbox.intersects(p.hitbox.getBoundsInLocal())){
+							dead.setVisible(true);
+							ftdead.setOnFinished(e->{
+								dead.setVisible(false);
+							});
+							ftdead.play();
 							p.inject = true;
 							p.superMode = true;
 							p.animation = true;
+							p2.point++;
+							p2.pointText.setText(Integer.toString(p2.point)+"/10");
+							if(p2.point == 10) gameOver = true;
 						}
 					}
 				}
@@ -397,7 +470,12 @@ public class Main extends Application{
 						}
 					}
 				}
+				
+				if(gameOver){
+					animeRobot.keyPress(KeyCode.F11);
+				}
 
+				//player inject and invoke superMode
 				if(p.animation||p2.animation){
 					p.animation = false;
 					p2.animation = false;
@@ -428,12 +506,159 @@ public class Main extends Application{
 					}
 				}
 				
-	
 	         }
 	      };
-	      mainloop.start();
+	   
 
+		//set for start button, which control the animation function
+		button.setOnMouseClicked(event ->{
+			if (pause) {
+				mainloop.stop();
+				timeline.stop();
+				buttonText.setText("Start");
+			}else{
+				mainloop.start();
+				buttonText.setText("Pause");
+				startGame.setVisible(false);
+				timeline.getKeyFrames().add(
+						new KeyFrame(Duration.seconds(STARTTIME+1),
+						new KeyValue(timeSeconds, 0)));
+				timeline.setOnFinished(e ->{
+					resetbutton.setDisable(false);
+					button.setDisable(true);
+					button.setOpacity(0.2);
+					buttonText.setOpacity(0.2);
+					resetbutton.setOpacity(1);
+					resetbuttonText.setOpacity(1);
+					timeup.setVisible(true);
+					mainloop.stop();
+					
+				});
+				timeline.play();
+			}
+			pause=!pause;
+		});
+		resetbutton.setOnMouseClicked(event ->{
+			p.setPos(p_x, p_y);
+			p2.setPos(p2_x, p2_y);
+			p.point = 0;
+			p2.point = 0;
+			p.pointText.setText(Integer.toString(p.point)+"/10");
+			p2.pointText.setText(Integer.toString(p2.point)+"/10");
+			p.inject = false;
+			p2.inject = false;
+
+			//reset clock
+			timeSeconds.set(STARTTIME);
+			gameover.setVisible(false);
+			timeup.setVisible(false);
+			button.setDisable(false);
+			resetbutton.setDisable(true);
+			button.setOpacity(1);
+			buttonText.setOpacity(1);
+			resetbutton.setOpacity(0.2);
+			resetbuttonText.setOpacity(0.2);
+			buttonText.setText("Start");
+
+			pause=!pause;
+		});
+
+		//set for keyboard
+		scene.setOnKeyPressed(ke -> {
+			if (ke.getCode() == KeyCode.LEFT) p.Leftpress = true;
+			else if (ke.getCode() == KeyCode.RIGHT ) p.Rightpress = true;
+			else if (ke.getCode() == KeyCode.UP ) p.Up = true;
+			else if (ke.getCode() == KeyCode.DOWN ) p.Down = true;
+			else if (ke.getCode() == KeyCode.ENTER) {
+				if(!p.alreayFired){
+				  p.fire = true;
+				  p.alreayFired = true;
+				} 
+			  }else if (ke.getCode()==KeyCode.A) p2.Leftpress = true;
+			  else if (ke.getCode()==KeyCode.D) p2.Rightpress = true;
+			  else if (ke.getCode()==KeyCode.W) p2.Up = true;
+			  else if (ke.getCode()==KeyCode.S) p2.Down = true;
+			  else if (ke.getCode() == KeyCode.SPACE) {
+				  if(!p2.alreayFired){
+					p2.fire = true;
+					p2.alreayFired = true;
+				  } 
+			  }else if(ke.getCode()==KeyCode.F11){	
+				  if(gameOver){
+					mainloop.stop();
+		
+					//reset clock
+					timeline.stop();
+					button.setDisable(true);
+					resetbutton.setDisable(false);
+					button.setOpacity(0.4);
+					buttonText.setOpacity(0.4);
+					resetbutton.setOpacity(1);
+					resetbuttonText.setOpacity(1);
+					gameOver = false;
+					gameover.setVisible(true);
+					pause=!pause;
+				  } 
+			  }
+	   });
+		scene.setOnKeyReleased(ke -> {
+		  if (ke.getCode() == KeyCode.LEFT) {
+			p.Leftpress = false;
+			if(p.Motion[0]<0){
+				p.Motion[0] = 0;
+			}
+		  }
+		  else if (ke.getCode() == KeyCode.RIGHT) {
+			p.Rightpress = false;
+			if(p.Motion[0]>0){
+				p.Motion[0] = 0;
+			}
+		  }
+		  else if (ke.getCode() == KeyCode.UP) {
+			p.Up = false;
+			if(p.Motion[1]>0){
+				p.Motion[1] = 0;
+			}
+		  }
+		  else if (ke.getCode() == KeyCode.DOWN) {
+			p.Down = false;
+			if(p.Motion[1]<0){
+				p.Motion[1] = 0;
+			}
+		  }else if (ke.getCode() == KeyCode.ENTER) {
+			p.fire = false;
+			p.alreayFired = false;
+		  }else if (ke.getCode() == KeyCode.A) {
+			p2.Leftpress = false;
+			if(p2.Motion[0]<0){
+				p2.Motion[0] = 0;
+			}
+		  }
+		  else if (ke.getCode() == KeyCode.D) {
+			p2.Rightpress = false;
+			if(p2.Motion[0]>0){
+				p2.Motion[0] = 0;
+			}
+		  }
+		  else if (ke.getCode() == KeyCode.W) {
+			p2.Up = false;
+			if(p2.Motion[1]>0){
+				p2.Motion[1] = 0;
+			}
+		  }
+		  else if (ke.getCode() == KeyCode.S) {
+			p2.Down = false;
+			if(p2.Motion[1]<0){
+				p2.Motion[1] = 0;
+			}
+		  }else if (ke.getCode() == KeyCode.SPACE) {
+			p2.fire = false;
+			p2.alreayFired = false;
+		  }
+		
+	   });
 	    
+		
 	}
 
 }

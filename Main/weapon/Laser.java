@@ -25,7 +25,7 @@ public class Laser extends Entity{
         }
         hitbox = new Rectangle();
         hitbox.setFill(Color.TRANSPARENT);
-        hitbox.setStroke(Color.YELLOW);
+        hitbox.setStroke(Color.TRANSPARENT);
         hitbox.setStrokeWidth(2);
         setPos(x,y);
 	}

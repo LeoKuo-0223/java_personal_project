@@ -6,6 +6,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 public class Player extends Entity{
     public boolean animation ;
@@ -16,7 +18,19 @@ public class Player extends Entity{
             turnright =new Image(new FileInputStream("picture/player_12.png"));
             turnleft =new Image(new FileInputStream("picture/player_14.png"));
             turnup =new Image(new FileInputStream("picture/player_02.png"));
+            face = new ImageView(new Image(new FileInputStream("picture/playerFace.png")));
+            faceBase = new Rectangle(150,150);
             setSize(100,100);
+            pointText = new Text(160,200,"0/10");
+		    pointText.setFont(Font.font(25));
+            face.setFitWidth(64*ratio[0]);
+            face.setFitHeight(64*ratio[1]);
+            face.setX(150*ratio[0]); 
+            face.setY(100*ratio[1]);
+            faceBase.setX(112.5*ratio[0]);
+            faceBase.setY(70*ratio[1]);
+            faceBase.setFill(Color.LIGHTPINK);
+        
         }
         else if(role ==2){
             playerImage = new Image(new FileInputStream("picture/character_zombie_cheer0.png"));
@@ -24,16 +38,29 @@ public class Player extends Entity{
             turnleft = new Image(new FileInputStream("picture/character_zombie_Left.png"));
             turnright =new Image(new FileInputStream("picture/character_zombie_walk0.png"));
             turnup =new Image(new FileInputStream("picture/character_zombie_back.png"));
+            face = new ImageView(new Image(new FileInputStream("picture/headShock.png")));
+            faceBase = new Rectangle(150,150);
             setSize(100,90);
+            pointText = new Text(160,460,"0/10");
+		    pointText.setFont(Font.font(25));
+            face.setFitWidth(64*ratio[0]);
+            face.setFitHeight(64*ratio[1]);
+            face.setX(150*ratio[0]); 
+            face.setY(350*ratio[1]);
+            faceBase.setX(112.5*ratio[0]);
+            faceBase.setY(470*ratio[1]);
+            faceBase.setFill(Color.LIGHTGREEN);
+            
         }
-		
+		faceBase.setArcWidth(30);
+        faceBase.setArcHeight(30);
         player.setSmooth(true);
         hitbox = new Rectangle();
         hitbox.setFill(Color.TRANSPARENT);
         hitbox.setStroke(Color.TRANSPARENT);
         hitbox.setStrokeWidth(2);
         animation = false;
-        
+        point = 0;
         setPos(x,y);
         
 	}
@@ -51,6 +78,7 @@ public class Player extends Entity{
     hitbox.setHeight((Height-40)*ratio[1]);
     hitbox.setX((Pos[0]-(Width-40)/2)*ratio[0]); 
     hitbox.setY((1080-Pos[1]-(Height-30))*ratio[1]);
+    
    }
    @Override
    public void act(){

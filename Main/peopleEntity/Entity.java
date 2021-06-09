@@ -11,6 +11,7 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 
 public class Entity {
 	public Image playerImage;
@@ -36,6 +37,10 @@ public class Entity {
 	public List<Laser> laserList = new ArrayList<>();
 	public boolean inject = false;
 	public boolean superMode = false;
+	public int point ;
+    public Text pointText;
+	public ImageView face;
+	public Rectangle faceBase;
 	 public Entity() throws FileNotFoundException{}
 
 	   public void setPos(double x,double y){

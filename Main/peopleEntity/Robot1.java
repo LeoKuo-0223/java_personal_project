@@ -7,9 +7,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-public class Robot extends Entity{
+public class Robot1 extends Entity{
     public boolean turnaround;
-    public Robot(double x,double y) throws FileNotFoundException{
+    public Robot1(double x,double y) throws FileNotFoundException{
         playerImage = new Image(new FileInputStream("picture/character_robot_drag.png"));
         player = new ImageView(playerImage);
         player.setSmooth(true);
