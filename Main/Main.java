@@ -61,7 +61,7 @@ public class Main extends Application {
 	public double p_y = 880;
 	public double p2_x = 1470;
 	public double p2_y = 100;
-	private static final Integer STARTTIME = 180;
+	private static final Integer STARTTIME = 60;
 	private Timeline timeline;
 	private Label timerLabel = new Label();
 	private IntegerProperty timeSeconds = new SimpleIntegerProperty(STARTTIME);
@@ -235,7 +235,7 @@ public class Main extends Application {
 	    AnimationTimer mainloop = new AnimationTimer() {
 	         @Override
 	         public void handle(long t) {
-				// Entity.setScreenSize(stage.getWidth(),stage.getHeight());
+				Entity.setScreenSize(stage.getWidth(),stage.getHeight());
 				map.forEach(m -> m.act());
 				obstacle.forEach(o -> {try {o.act();} catch (FileNotFoundException e1) {e1.printStackTrace();}});
 				player.forEach(p -> {try {p.act();} catch (FileNotFoundException e1) {e1.printStackTrace();}});
@@ -253,7 +253,7 @@ public class Main extends Application {
 					if(p.getMy()>0){
 						for(Entity b: obstacle ){
 							if(p.hitbox.intersects(b.hitbox.getBoundsInLocal())){
-								System.out.println("hit up");
+								// System.out.println("hit up");
 								p.collidev = 1;
 								p.setPos(p.getX(), p.getY()-10);
 							}
@@ -261,7 +261,7 @@ public class Main extends Application {
 					}else if(p.getMy()<0){
 						for(Entity b: obstacle ){
 							if(p.hitbox.intersects(b.hitbox.getBoundsInLocal())){
-								System.out.println("hit down");
+								// System.out.println("hit down");
 								p.collidev = 2;
 								p.setPos(p.getX(), p.getY()+10);
 							}
@@ -270,7 +270,7 @@ public class Main extends Application {
 						for(Entity b: obstacle) {
 							
 								if(p.hitbox.intersects(b.hitbox.getBoundsInLocal())){
-									System.out.println("hit right");
+									// System.out.println("hit right");
 									p.collideh = 1;
 									p.setPos(p.getX()-10, p.getY());
 								}
@@ -279,7 +279,7 @@ public class Main extends Application {
 					}else if(p.getMx()<0){
 						for(Entity b: obstacle ){
 							if(p.hitbox.intersects(b.hitbox.getBoundsInLocal())){
-								System.out.println("hit left");
+								// System.out.println("hit left");
 								p.collideh = 2;
 								p.setPos(p.getX()+10, p.getY());
 							}
@@ -288,7 +288,7 @@ public class Main extends Application {
 					//shoot
 					if(p.fire){
 						try {
-							System.out.println("shoot");
+							// System.out.println("shoot");
 							if(p.player.getImage()==(p.turnright)){
 						loop1: for(int i=0;i<50;i++){
 								Laser la = new Laser(p.getX()+20*(i+1),p.getY(),true);
