@@ -1,0 +1,5 @@
+/javafx-sdk-21.0.5
+*.class
+*.jar
+*.DS_Store
+*.json
