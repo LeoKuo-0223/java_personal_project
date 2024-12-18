@@ -5,6 +5,7 @@
     ],
     "java.project.sourcePaths": [
         "Main",
+        "test",
         "javafx-sdk-21.0.5"
     ],
 }
