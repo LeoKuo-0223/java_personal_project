@@ -41,86 +41,86 @@ public class Entity {
     public Text pointText;
 	public ImageView face;
 	public Rectangle faceBase;
-	 public Entity() throws FileNotFoundException{}
+	public Entity() throws FileNotFoundException{}
 
-	   public void setPos(double x,double y){
-	      Pos[0] = x;
-	      Pos[1] = y;
-	      player.setFitHeight(Width*ratio[0]);
-	      player.setFitHeight(Height*ratio[1]);
-	      player.setX((Pos[0]-Width/2)*ratio[0]); 
-	      player.setY((1080-Pos[1]-Height)*ratio[1]);
-	   }
+	public void setPos(double x,double y){
+		Pos[0] = x;
+		Pos[1] = y;
+		player.setFitHeight(Width*ratio[0]);
+		player.setFitHeight(Height*ratio[1]);
+		player.setX((Pos[0]-Width/2)*ratio[0]); 
+		player.setY((1080-Pos[1]-Height)*ratio[1]);
+	}
 
-	   public void setSize(int w,int h){
-	      Width = w;
-	      Height = h;
-	   }
+	public void setSize(int w,int h){
+		Width = w;
+		Height = h;
+	}
 
-	   public static void setScreenSize(double x,double y){
-	      ratio[0]=x/1920;
-	      ratio[1]=y/1080;
-	   }
+	public static void setScreenSize(double x,double y){
+		ratio[0]=x/1920;
+		ratio[1]=y/1080;
+	}
 
-	   public double getX(){
-	      return Pos[0];
-	   }
+	public double getX(){
+		return Pos[0];
+	}
 
-	   public double getY(){
-	      return Pos[1];
-	   }
+	public double getY(){
+		return Pos[1];
+	}
 
-	   public double getW(){
-	      return Width;
-	   }
-	   
-	   public double getH(){
-	      return Height;
-	   }
+	public double getW(){
+		return Width;
+	}
+	
+	public double getH(){
+		return Height;
+	}
 
-	   public double getMx(){
-	      return Motion[0];
-	   }
+	public double getMx(){
+		return Motion[0];
+	}
 
-	   public double getMy(){
-	      return Motion[1];
-	   }
+	public double getMy(){
+		return Motion[1];
+	}
 
-	   public void setMx(double mx){
-	      Motion[0]=mx;
-	   }
+	public void setMx(double mx){
+		Motion[0]=mx;
+	}
 
-	   public void setMy(double my){
-	      Motion[1]=my;
-	   }
+	public void setMy(double my){
+		Motion[1]=my;
+	}
 
-	   public double cancel(double my){
-	      if (my<0) my=0;
-	      return my;
-	   }
+	public double cancel(double my){
+		if (my<0) my=0;
+		return my;
+	}
 
-	   public WritableImage getFlip(Image img){
-	      int w=(int)img.getWidth(),h=(int)img.getHeight();
-	      WritableImage flipimg = new WritableImage(w,h);
-	      PixelReader pixelReader = img.getPixelReader();
-	      PixelWriter writer = flipimg.getPixelWriter();
+	public WritableImage getFlip(Image img){
+		int w=(int)img.getWidth(),h=(int)img.getHeight();
+		WritableImage flipimg = new WritableImage(w,h);
+		PixelReader pixelReader = img.getPixelReader();
+		PixelWriter writer = flipimg.getPixelWriter();
 
-	      for(int col=0;col<h;col++){
-	         for(int row=0;row<w;row++){
-	            Color color = pixelReader.getColor(row,col);
-	            writer.setColor(w-row-1, col, color);
-	         }
-	      }
-	      return flipimg;
-	   }
+		for(int col=0;col<h;col++){
+			for(int row=0;row<w;row++){
+			Color color = pixelReader.getColor(row,col);
+			writer.setColor(w-row-1, col, color);
+			}
+		}
+		return flipimg;
+	}
 
-	   public boolean Isinrange(Entity B){
-	      boolean inrange  = false;
-	      if(this.getX()-35<B.getX()+B.getW()/2&&this.getX()+35>B.getX()-B.getW()/2){
-	         inrange = true;
-	      }
-	      return inrange;
-	   }
+	public boolean Isinrange(Entity B){
+		boolean inrange  = false;
+		if(this.getX()-35<B.getX()+B.getW()/2&&this.getX()+35>B.getX()-B.getW()/2){
+			inrange = true;
+		}
+		return inrange;
+	}
 
-	   public void act() throws FileNotFoundException{}
+	public void act() throws FileNotFoundException{}
 }
