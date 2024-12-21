@@ -34,10 +34,10 @@ public class obstacle_wood extends Entity{
     hitbox.setHeight(Height*ratio[1]);
     hitbox.setX((Pos[0]-Width/2)*ratio[0]); 
     hitbox.setY((1080-Pos[1]-(Height+10))*ratio[1]);
-   }
+    }
 
-   @Override
-   public void act(){
-      setPos(getX(),getY());
-   }
+    @Override
+    public void act(){
+        setPos(getX(),getY());
+    }
 }

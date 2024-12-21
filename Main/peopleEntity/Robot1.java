@@ -4,7 +4,6 @@ import java.io.FileNotFoundException;
 import java.io.FileInputStream;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 public class Robot1 extends Entity{
@@ -31,18 +30,18 @@ public class Robot1 extends Entity{
     player.setX((Pos[0]-Width/2)*ratio[0]); 
     player.setY((1080-Pos[1]-Height)*ratio[1]);
 
-   }
-   @Override
-   public void act(){
-       if(getY()>=80 &&!turnaround){
+    }
+    @Override
+    public void act(){
+        if(getY()>=80 &&!turnaround){
         setPos(getX(), getY()-1);
-       }else turnaround = true;
-       
-       if(turnaround){
-           if(getY()<=870){
+        }else turnaround = true;
+        
+        if(turnaround){
+            if(getY()<=870){
             setPos(getX(), getY()+1);
-           }else turnaround = false;
-       }
-       
-   }
+            }else turnaround = false;
+        }
+        
+    }
 }

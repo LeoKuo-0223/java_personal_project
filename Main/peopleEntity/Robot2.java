@@ -27,18 +27,18 @@ public class Robot2 extends Entity{
     player.setX((Pos[0]-Width/2)*ratio[0]); 
     player.setY((1080-Pos[1]-Height)*ratio[1]);
 
-   }
-   @Override
-   public void act(){
-       if(getY()<=870 &&!turnaround){
+    }
+    @Override
+    public void act(){
+        if(getY()<=870 &&!turnaround){
         setPos(getX(), getY()+1);
-       }else turnaround = true;
-       
-       if(turnaround){
-           if(getY()>=80){
+        }else turnaround = true;
+        
+        if(turnaround){
+            if(getY()>=80){
             setPos(getX(), getY()-1);
-           }else turnaround = false;
-       }
-       
-   }
+            }else turnaround = false;
+        }
+        
+    }
 }

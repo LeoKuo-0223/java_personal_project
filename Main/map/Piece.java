@@ -41,11 +41,11 @@ public class Piece extends Entity{
     block.setX((Pos[0]-Width/2)*ratio[0]); 
     block.setY((1080-Pos[1]-Height)*ratio[1]);
 
-   }
+    }
 
 
-   @Override
-   public void act(){
-      setPos(getX(),getY());
-   }
+    @Override
+    public void act(){
+        setPos(getX(),getY());
+    }
 }
