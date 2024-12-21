@@ -58,8 +58,8 @@ public class Main extends Application {
 	private int mapRaw_count = 0;
 	public static Player p;
 	public static Player p2;
-	public static Robot1 r1;
-	public static Robot2 r2;
+	public static peopleEntity.Robot r1;
+	public static peopleEntity.Robot r2;
 	public Path path = new Path();
 	public List<Entity> player = new ArrayList<>();
 	public List<Piece> map = new ArrayList<>();
@@ -132,8 +132,8 @@ public class Main extends Application {
 		gameOver = false;
 		p = new Player(p_x, p_y, 1);
 		p2 = new Player(p2_x, p2_y, 2);
-		r1 = new Robot1(520, 870);
-		r2 = new Robot2(1590, 80);
+		r1 = new peopleEntity.Robot(520, 870, "picture/character_robot_drag.png", 1);
+		r2 = new peopleEntity.Robot(1590, 80, "picture/character_robot_drag_Left.png", 2);
 	}
 
 	// Method to initialize UI controls
