@@ -19,3 +19,8 @@ WASD鍵+SPACE(射擊)
 
 
 (切換成英文國際鍵盤)
+
+1, renamed variable, constant capitalize
+2, extract method to break long method
+3, deal with warnnig
+4, organize import
