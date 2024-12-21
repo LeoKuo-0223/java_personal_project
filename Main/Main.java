@@ -1,11 +1,8 @@
-import peopleEntity.*;
-import map.*;
-import weapon.*;
-
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
+import javafx.animation.AnimationTimer;
+import javafx.animation.FadeTransition;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -27,27 +24,25 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import javafx.animation.AnimationTimer;
-import javafx.animation.FadeTransition;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
+import map.*;
+import peopleEntity.*;
+import weapon.*;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
+
+// Main class for the JavaFX application
 public class Main extends Application {
-	List<Entity> player = new ArrayList<>();
-	List<Piece> map = new ArrayList<>();
-	List<Entity> obstacle = new ArrayList<>();
-	int Map_X = 500;
-	int Map_Y = 10;
-	public ImageView startGame;
-	public ImageView dead;
-	public ImageView gameover;
-	public ImageView timeup;
-	public double p_x = 650;
-	public double p_y = 880;
-	public double p2_x = 1470;
-	public double p2_y = 100;
 	private static final Integer STARTTIME = 60;
+	private static final double PLAYER_INITIAL_X = 650;
+    private static final double PLAYER_INITIAL_Y = 880;
+    private static final double PLAYER2_INITIAL_X = 1470;
+    private static final double PLAYER2_INITIAL_Y = 100;
+	private static final int MAP_X = 500;
+    private static final int MAP_Y = 10;
+	
 	private Timeline timeline;
 	private Label timerLabel = new Label();
 	private IntegerProperty timeSeconds = new SimpleIntegerProperty(STARTTIME);
@@ -60,44 +55,89 @@ public class Main extends Application {
 	private Text resetbuttonText ;
 	private boolean gameOver;
 	private Robot animeRobot;
-	int mapRaw_count = 0;
+	private int mapRaw_count = 0;
 	public static Player p;
 	public static Player p2;
 	public static Robot1 r1;
 	public static Robot2 r2;
-	Path path = new Path();
+	public Path path = new Path();
+	public List<Entity> player = new ArrayList<>();
+	public List<Piece> map = new ArrayList<>();
+	public List<Entity> obstacle = new ArrayList<>();
+	public ImageView startGame;
+	public ImageView dead;
+	public ImageView gameover;
+	public ImageView timeup;
+	public double p_x = PLAYER_INITIAL_X;
+    public double p_y = PLAYER_INITIAL_Y;
+    public double p2_x = PLAYER2_INITIAL_X;
+    public double p2_y = PLAYER2_INITIAL_Y;
+	
+	private Group root;
+	private Scene scene;
+	private VBox vb;
+	private AnimationTimer mainloop;
 
+	// Constructor to initialize images, players, and UI components
 	public Main() throws FileNotFoundException {
+		initializeImages();
+		initializePlayers();
+		initializeUIControls();
+		
+		// Initialize root, scene, and vb
+		root = new Group();
+		scene = new Scene(root, 1920, 1080);
+		vb = new VBox();
+		vb.setAlignment(Pos.CENTER);
+		vb.setPrefWidth(150);
+		vb.setLayoutX(112.5);
+		vb.setLayoutY(80);
+		vb.setSpacing(100);
+	}
+
+	// Method to initialize images
+	private void initializeImages() throws FileNotFoundException {
 		startGame = new ImageView(new Image(new FileInputStream("picture/ZS3t.gif")));
 		startGame.setX(550);
 		startGame.setY(400);
 		startGame.setFitWidth(480);
 		startGame.setFitHeight(320);
 		startGame.setVisible(true);
+
 		dead = new ImageView(new Image(new FileInputStream("picture/zYj.gif")));
 		dead.setX(550);
 		dead.setY(400);
 		dead.setFitWidth(480);
 		dead.setFitHeight(320);
 		dead.setVisible(false);
+
 		timeup = new ImageView(new Image(new FileInputStream("picture/A8Bf-unscreen.gif")));
 		timeup.setX(550);
 		timeup.setY(400);
 		timeup.setFitWidth(400);
 		timeup.setFitHeight(400);
 		timeup.setVisible(false);
+
 		gameover = new ImageView(new Image(new FileInputStream("picture/QUC8-unscreen.gif")));
 		gameover.setX(550);
 		gameover.setY(400);
 		gameover.setFitWidth(400);
 		gameover.setFitHeight(400);
 		gameover.setVisible(false);
+	}
+
+	// Method to initialize players
+	private void initializePlayers() throws FileNotFoundException {
 		animeRobot = new Robot();
 		gameOver = false;
 		p = new Player(p_x, p_y, 1);
 		p2 = new Player(p2_x, p2_y, 2);
 		r1 = new Robot1(520, 870);
 		r2 = new Robot2(1590, 80);
+	}
+
+	// Method to initialize UI controls
+	private void initializeUIControls() {
 		timeline = new Timeline();
 		button = new Rectangle();
 		resetbutton = new Rectangle();
@@ -108,11 +148,11 @@ public class Main extends Application {
 
 		buttonText.setFill(Color.RED);
 		buttonText.setDisable(true);
-		buttonText.setFont(Font.font(null, FontWeight.BOLD,30));
+		buttonText.setFont(Font.font(null, FontWeight.BOLD, 30));
 
 		resetbuttonText = new Text("Play Again");
 		resetbuttonText.setFill(Color.RED);
-		resetbuttonText.setFont(Font.font(null, FontWeight.BOLD,20));
+		resetbuttonText.setFont(Font.font(null, FontWeight.BOLD, 20));
 		resetbuttonText.setDisable(true);
 		resetbuttonText.setOpacity(0.4);
 
@@ -130,12 +170,12 @@ public class Main extends Application {
 		resetbutton.setOpacity(0.4);
 		resetbutton.setDisable(true);
 
-        buttonstack.setAlignment(Pos.CENTER);
+		buttonstack.setAlignment(Pos.CENTER);
 		buttonstack.setPrefWidth(100);
 		buttonstack.setLayoutX(112.5);
 		buttonstack.setLayoutY(700);
 		buttonstack.getChildren().addAll(button, buttonText);
-		
+
 		resetbuttonstack.setAlignment(Pos.CENTER);
 		resetbuttonstack.setPrefWidth(150);
 		resetbuttonstack.setLayoutX(112.5);
@@ -147,53 +187,29 @@ public class Main extends Application {
 		timerLabel.setFont(Font.font(50));
 	}
 
-	public static void main(String args[]) throws FileNotFoundException {
-		launch(args);
-	}
-
-	@Override
-	public void start(Stage stage) throws Exception {
-		Group root = new Group();
-		Scene scene = new Scene(root, 1920, 1080);
-		VBox vb = new VBox();
-		vb.setAlignment(Pos.CENTER);
-		vb.setPrefWidth(150);
-		vb.setLayoutX(112.5);
-		vb.setLayoutY(80);
-		vb.setSpacing(100);
-
-		stage.setFullScreen(true);
-	    stage.setTitle("test");
-	    stage.setScene(scene);
-	    stage.show();
-		
-		player.add(p);
-		player.add(p2);
-		player.add(r1);
-		player.add(r2);
-		
-		//build map
+	// New method to build the map
+	private void buildMap(Group root) throws FileNotFoundException {
 		for(String col: Map.map1){
 			for(int i=0;i<col.length();i++){
 				if(col.charAt(i)=='1'){
-					Bound bound = new Bound(Map_X +80*i, Map_Y+80*mapRaw_count);
-					obstacle .add(bound);
+					Bound bound = new Bound(MAP_X +80*i, MAP_Y+80*mapRaw_count);
+					obstacle.add(bound);
 					root.getChildren().addAll(bound.bound,bound.hitbox);
 				}else if(col.charAt(i)=='0'){
-					Piece pieces = new Piece(Map_X +80*i, Map_Y+80*mapRaw_count);
+					Piece pieces = new Piece(MAP_X +80*i, MAP_Y+80*mapRaw_count);
 					map.add(pieces);
 					root.getChildren().addAll(pieces.ground,pieces.block);
 				}else if(col.charAt(i)=='2'){
-					Obstacle1 obs = new Obstacle1(Map_X +80*i, Map_Y+80*mapRaw_count);
+					Obstacle1 obs = new Obstacle1(MAP_X +80*i, MAP_Y+80*mapRaw_count);
 					obstacle.add(obs);
-					Piece pieces = new Piece(Map_X +80*i, Map_Y+80*mapRaw_count);
+					Piece pieces = new Piece(MAP_X +80*i, MAP_Y+80*mapRaw_count);
 					map.add(pieces);
 					root.getChildren().addAll(pieces.ground,pieces.block);
 					root.getChildren().addAll(obs.obstacle,obs.hitbox);
 				}else if(col.charAt(i)=='3'){
-					obstacle_wood obs = new obstacle_wood(Map_X +80*i, Map_Y+80*mapRaw_count);
-					obstacle .add(obs);
-					Piece pieces = new Piece(Map_X +80*i, Map_Y+80*mapRaw_count);
+					obstacle_wood obs = new obstacle_wood(MAP_X +80*i, MAP_Y+80*mapRaw_count);
+					obstacle.add(obs);
+					Piece pieces = new Piece(MAP_X +80*i, MAP_Y+80*mapRaw_count);
 					map.add(pieces);
 					root.getChildren().addAll(pieces.ground,pieces.block);
 					root.getChildren().addAll(obs.obstacle,obs.hitbox);
@@ -201,37 +217,35 @@ public class Main extends Application {
 			}
 			mapRaw_count++;
 		}
-		player.forEach(p -> root.getChildren().addAll(p.player,p.hitbox));
-		vb.getChildren().addAll(p.faceBase,p2.faceBase,timerLabel);
-		root.getChildren().addAll(vb,buttonstack,resetbuttonstack);
-		root.getChildren().addAll(p.pointText,p.face,p2.pointText,p2.face);
-		root.getChildren().add(startGame);
-		root.getChildren().add(dead);
-		root.getChildren().add(timeup);
-		root.getChildren().add(gameover);
-		
+	}
 
-		//first initialize the object on the scene
-		Entity.setScreenSize(stage.getWidth(),stage.getHeight());
-		map.forEach(m -> m.act());
-		obstacle.forEach(o -> {try {o.act();} catch (FileNotFoundException e1) {e1.printStackTrace();}});
-		player.forEach(p -> {try {p.act();} catch (FileNotFoundException e1) {e1.printStackTrace();}});
-
-		//main animation function
-	    AnimationTimer mainloop = new AnimationTimer() {
-	         @Override
-	         public void handle(long t) {
-				Entity.setScreenSize(stage.getWidth(),stage.getHeight());
+	// Method to initialize the main animation loop
+	private void initializeMainLoop(Stage stage) {
+		mainloop = new AnimationTimer() {
+			@Override
+			public void handle(long t) {
+				Entity.setScreenSize(stage.getWidth(), stage.getHeight());
 				map.forEach(m -> m.act());
-				obstacle.forEach(o -> {try {o.act();} catch (FileNotFoundException e1) {e1.printStackTrace();}});
-				player.forEach(p -> {try {p.act();} catch (FileNotFoundException e1) {e1.printStackTrace();}});
+				obstacle.forEach(o -> {
+					try {
+						o.act();
+					} catch (FileNotFoundException e1) {
+						e1.printStackTrace();
+					}
+				});
+				player.forEach(p -> {
+					try {
+						p.act();
+					} catch (FileNotFoundException e1) {
+						e1.printStackTrace();
+					}
+				});
 				FadeTransition ft1 = new FadeTransition(Duration.seconds(0.1), p.player);
 				FadeTransition ft2 = new FadeTransition(Duration.seconds(0.1), p2.player);
 				FadeTransition ftdead = new FadeTransition(Duration.seconds(0.2), dead);
 				ftdead.setFromValue(0.4);
 				ftdead.setToValue(1.0);
 				ftdead.setCycleCount(4);
-				
 
 				//collide with bound
 				for(Entity p: player){
@@ -457,11 +471,12 @@ public class Main extends Application {
 					}
 				}
 				
+				// Handle game over condition
 				if(gameOver){
 					animeRobot.keyPress(KeyCode.F11);
 				}
 
-				//player inject and invoke superMode
+				// Handle player injections and super mode
 				if(p.animation||p2.animation){
 					p.animation = false;
 					p2.animation = false;
@@ -492,24 +507,41 @@ public class Main extends Application {
 					}
 				}
 				
-	         }
-	      };
-	   
+			}
+		};
+	}
 
-		//set for start button, which control the animation function
-		button.setOnMouseClicked(event ->{
+	// Method to initialize UI elements
+	private void initializeUIElements() {
+		player.add(p);
+		player.add(p2);
+		player.add(r1);
+		player.add(r2);
+		player.forEach(p -> root.getChildren().addAll(p.player, p.hitbox));
+		vb.getChildren().addAll(p.faceBase, p2.faceBase, timerLabel);
+		root.getChildren().addAll(vb, buttonstack, resetbuttonstack);
+		root.getChildren().addAll(p.pointText, p.face, p2.pointText, p2.face);
+		root.getChildren().add(startGame);
+		root.getChildren().add(dead);
+		root.getChildren().add(timeup);
+		root.getChildren().add(gameover);
+	}
+
+	// Method to set up the start button
+	private void setupStartButton() {
+		button.setOnMouseClicked(event -> {
 			if (pause) {
 				mainloop.stop();
 				timeline.stop();
 				buttonText.setText("Start");
-			}else{
+			} else {
 				mainloop.start();
 				buttonText.setText("Pause");
 				startGame.setVisible(false);
 				timeline.getKeyFrames().add(
-						new KeyFrame(Duration.seconds(STARTTIME+1),
-						new KeyValue(timeSeconds, 0)));
-				timeline.setOnFinished(e ->{
+						new KeyFrame(Duration.seconds(STARTTIME + 1),
+								new KeyValue(timeSeconds, 0)));
+				timeline.setOnFinished(e -> {
 					resetbutton.setDisable(false);
 					button.setDisable(true);
 					button.setOpacity(0.2);
@@ -518,19 +550,23 @@ public class Main extends Application {
 					resetbuttonText.setOpacity(1);
 					timeup.setVisible(true);
 					mainloop.stop();
-					
+
 				});
 				timeline.play();
 			}
-			pause=!pause;
+			pause = !pause;
 		});
-		resetbutton.setOnMouseClicked(event ->{
+	}
+
+	// Method to set up the reset button
+	private void setupResetButton() {
+		resetbutton.setOnMouseClicked(event -> {
 			p.setPos(p_x, p_y);
 			p2.setPos(p2_x, p2_y);
 			p.point = 0;
 			p2.point = 0;
-			p.pointText.setText(Integer.toString(p.point)+"/10");
-			p2.pointText.setText(Integer.toString(p2.point)+"/10");
+			p.pointText.setText(Integer.toString(p.point) + "/10");
+			p2.pointText.setText(Integer.toString(p2.point) + "/10");
 			p.inject = false;
 			p2.inject = false;
 
@@ -546,105 +582,151 @@ public class Main extends Application {
 			resetbuttonText.setOpacity(0.2);
 			buttonText.setText("Start");
 
-			pause=!pause;
+			pause = !pause;
 		});
-
-		//set for keyboard
-		scene.setOnKeyPressed(ke -> {
-			if (ke.getCode() == KeyCode.LEFT) p.Leftpress = true;
-			else if (ke.getCode() == KeyCode.RIGHT ) p.Rightpress = true;
-			else if (ke.getCode() == KeyCode.UP ) p.Up = true;
-			else if (ke.getCode() == KeyCode.DOWN ) p.Down = true;
-			else if (ke.getCode() == KeyCode.ENTER) {
-				if(!p.alreayFired){
-				  p.fire = true;
-				  p.alreayFired = true;
-				} 
-			  }else if (ke.getCode()==KeyCode.A) p2.Leftpress = true;
-			  else if (ke.getCode()==KeyCode.D) p2.Rightpress = true;
-			  else if (ke.getCode()==KeyCode.W) p2.Up = true;
-			  else if (ke.getCode()==KeyCode.S) p2.Down = true;
-			  else if (ke.getCode() == KeyCode.SPACE) {
-				  if(!p2.alreayFired){
-					p2.fire = true;
-					p2.alreayFired = true;
-				  } 
-			  }else if(ke.getCode()==KeyCode.F11){	
-				  if(gameOver){
-					mainloop.stop();
-		
-					//reset clock
-					timeline.stop();
-					button.setDisable(true);
-					resetbutton.setDisable(false);
-					button.setOpacity(0.4);
-					buttonText.setOpacity(0.4);
-					resetbutton.setOpacity(1);
-					resetbuttonText.setOpacity(1);
-					gameOver = false;
-					gameover.setVisible(true);
-					pause=!pause;
-				  } 
-			  }
-	   });
-		scene.setOnKeyReleased(ke -> {
-		  if (ke.getCode() == KeyCode.LEFT) {
-			p.Leftpress = false;
-			if(p.Motion[0]<0){
-				p.Motion[0] = 0;
-			}
-		  }
-		  else if (ke.getCode() == KeyCode.RIGHT) {
-			p.Rightpress = false;
-			if(p.Motion[0]>0){
-				p.Motion[0] = 0;
-			}
-		  }
-		  else if (ke.getCode() == KeyCode.UP) {
-			p.Up = false;
-			if(p.Motion[1]>0){
-				p.Motion[1] = 0;
-			}
-		  }
-		  else if (ke.getCode() == KeyCode.DOWN) {
-			p.Down = false;
-			if(p.Motion[1]<0){
-				p.Motion[1] = 0;
-			}
-		  }else if (ke.getCode() == KeyCode.ENTER) {
-			p.fire = false;
-			p.alreayFired = false;
-		  }else if (ke.getCode() == KeyCode.A) {
-			p2.Leftpress = false;
-			if(p2.Motion[0]<0){
-				p2.Motion[0] = 0;
-			}
-		  }
-		  else if (ke.getCode() == KeyCode.D) {
-			p2.Rightpress = false;
-			if(p2.Motion[0]>0){
-				p2.Motion[0] = 0;
-			}
-		  }
-		  else if (ke.getCode() == KeyCode.W) {
-			p2.Up = false;
-			if(p2.Motion[1]>0){
-				p2.Motion[1] = 0;
-			}
-		  }
-		  else if (ke.getCode() == KeyCode.S) {
-			p2.Down = false;
-			if(p2.Motion[1]<0){
-				p2.Motion[1] = 0;
-			}
-		  }else if (ke.getCode() == KeyCode.SPACE) {
-			p2.fire = false;
-			p2.alreayFired = false;
-		  }
-		
-	   });
-	    
-		
 	}
 
+	// Method to initialize objects on the scene
+	private void initializeSceneObjects(Stage stage) {
+		Entity.setScreenSize(stage.getWidth(), stage.getHeight());
+		map.forEach(m -> m.act());
+		obstacle.forEach(o -> {
+			try {
+				o.act();
+			} catch (FileNotFoundException e1) {
+				e1.printStackTrace();
+			}
+		});
+		player.forEach(p -> {
+			try {
+				p.act();
+			} catch (FileNotFoundException e1) {
+				e1.printStackTrace();
+			}
+		});
+	}
+
+	// Method to set up keyboard controls for players
+	private void setupKeyboardControls() {
+		scene.setOnKeyPressed(ke -> {
+			if (ke.getCode() == KeyCode.LEFT) p.Leftpress = true;
+			else if (ke.getCode() == KeyCode.RIGHT) p.Rightpress = true;
+			else if (ke.getCode() == KeyCode.UP) p.Up = true;
+			else if (ke.getCode() == KeyCode.DOWN) p.Down = true;
+			else if (ke.getCode() == KeyCode.ENTER) {
+				if (!p.alreayFired) {
+					p.fire = true;
+					p.alreayFired = true;
+				} else if (ke.getCode() == KeyCode.A) p2.Leftpress = true;
+				else if (ke.getCode() == KeyCode.D) p2.Rightpress = true;
+				else if (ke.getCode() == KeyCode.W) p2.Up = true;
+				else if (ke.getCode() == KeyCode.S) p2.Down = true;
+				else if (ke.getCode() == KeyCode.SPACE) {
+					if (!p2.alreayFired) {
+						p2.fire = true;
+						p2.alreayFired = true;
+					}
+				} else if (ke.getCode() == KeyCode.F11) {
+					if (gameOver) {
+						mainloop.stop();
+
+						//reset clock
+						timeline.stop();
+						button.setDisable(true);
+						resetbutton.setDisable(false);
+						button.setOpacity(0.4);
+						buttonText.setOpacity(0.4);
+						resetbutton.setOpacity(1);
+						resetbuttonText.setOpacity(1);
+						gameOver = false;
+						gameover.setVisible(true);
+						pause = !pause;
+					}
+				}
+			}
+		});
+		scene.setOnKeyReleased(ke -> {
+			if (ke.getCode() == KeyCode.LEFT) {
+				p.Leftpress = false;
+				if (p.Motion[0] < 0) {
+					p.Motion[0] = 0;
+				}
+			} else if (ke.getCode() == KeyCode.RIGHT) {
+				p.Rightpress = false;
+				if (p.Motion[0] > 0) {
+					p.Motion[0] = 0;
+				}
+			} else if (ke.getCode() == KeyCode.UP) {
+				p.Up = false;
+				if (p.Motion[1] > 0) {
+					p.Motion[1] = 0;
+				}
+			} else if (ke.getCode() == KeyCode.DOWN) {
+				p.Down = false;
+				if (p.Motion[1] < 0) {
+					p.Motion[1] = 0;
+				}
+			} else if (ke.getCode() == KeyCode.ENTER) {
+				p.fire = false;
+				p.alreayFired = false;
+			} else if (ke.getCode() == KeyCode.A) {
+				p2.Leftpress = false;
+				if (p2.Motion[0] < 0) {
+					p2.Motion[0] = 0;
+				}
+			} else if (ke.getCode() == KeyCode.D) {
+				p2.Rightpress = false;
+				if (p2.Motion[0] > 0) {
+					p2.Motion[0] = 0;
+				}
+			} else if (ke.getCode() == KeyCode.W) {
+				p2.Up = false;
+				if (p2.Motion[1] > 0) {
+					p2.Motion[1] = 0;
+				}
+			} else if (ke.getCode() == KeyCode.S) {
+				p2.Down = false;
+				if (p2.Motion[1] < 0) {
+					p2.Motion[1] = 0;
+				}
+			} else if (ke.getCode() == KeyCode.SPACE) {
+				p2.fire = false;
+				p2.alreayFired = false;
+			}
+		});
+	}
+
+	// Start method to set up the stage and scene
+	@Override
+	public void start(Stage stage) throws Exception {
+		stage.setFullScreen(true);
+		stage.setTitle("test");
+		stage.setScene(scene);
+		stage.show();
+
+		//build map
+		buildMap(root);
+		
+		// Initialize UI elements
+		initializeUIElements();
+		
+		// Initialize main loop
+		initializeMainLoop(stage);
+
+		// Initialize objects on the scene
+		initializeSceneObjects(stage);
+
+		// Set up start button to control the animation function
+		setupStartButton();
+
+		// Set up reset button to reset the game state
+		setupResetButton();
+
+		// Set up keyboard controls for players
+		setupKeyboardControls();
+	}
+	// Main method to launch the application
+	public static void main(String args[]) throws FileNotFoundException {
+		launch(args);
+	}
 }
